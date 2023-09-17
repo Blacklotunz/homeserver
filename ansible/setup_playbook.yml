@@ -1,5 +1,5 @@
 ---
-  - name: "Setting up the home server"
+  - name: "Setting up the server"
     hosts: localhost
     connection: local
     
@@ -10,11 +10,11 @@
     vars_files:
         - vars/main_vars.yml
 
-    handlers:
-    - name: restart smbd
-      ansible.builtin.service:
-        name: smbd
-        state: restarted
+    # handlers:
+    # - name: restart smbd
+    #   ansible.builtin.service:
+    #     name: smbd
+    #     state: restarted
 
     tasks:
     - name: Install generic needed packages
@@ -25,7 +25,5 @@
         state: latest
         cache_valid_time: 3600
 
-    - import_tasks: tasks/setupZFStask.yml
     - import_tasks: tasks/setupUsersTask.yml
-    - import_tasks: tasks/setupSambaTask.yml
     - import_tasks: tasks/setupDocker.yml

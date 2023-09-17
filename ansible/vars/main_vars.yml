@@ -1,38 +1,25 @@
 ---
-# all non secret vars
-zfs: {
-  poolName: dataPool,
-  DISK1: '/dev/disk/by-id/scsi-123abc',
-  DISK2: '/dev/disk/by-id/scsi-456def',
-  DISK3: '/dev/disk/by-id/scsi-789ghi',
-  CACHEDISK: '/dev/disk/by-id/scsi-424242ababab',
-}
+# all non secret vars - for secrets check ansible vault https://docs.ansible.com/ansible/latest/vault_guide/index.html
 
 usergroups:
-  - family
+  - users
   - admins
 
+dockerusers:
+  - {name: 'administrator', groups: 'docker'}
+
 users:
-  - {name: 'mainuser', groups: 'family, admins', smbpasswd: 'mainuser'}
-  - {name: 'otheruser', groups: 'family', smbpasswd: 'otheruser'}
-  - {name: 'thirduser', groups: 'family', smbpasswd: 'thirduser'}
-  - {name: 'userNotInGroups', groups: '', smbpasswd: 'userNotInGroups'}
+  - {name: 'administrator', groups: 'users, admins'}
+#   - {name: 'otheruser', groups: 'users', smbpasswd: 'otheruser'}
+#   - {name: 'thirduser', groups: 'users', smbpasswd: 'thirduser'}
+#   - {name: 'userNotInGroups', groups: '', smbpasswd: 'userNotInGroups'}
 
-adminuser: mainuser # should be an existing one from above
+# domain_name: example.com
 
-shared_folders:
-  - {name: 'Images', path: '/{{zfs.poolName}}/media/images'}
-  - {name: 'Music', path: '/{{zfs.poolName}}/media/music'}
-  - {name: 'Shared folder', path: '/{{zfs.poolName}}/personal/all'}
-  - {name: 'Shared Backup Folder', path: '/{{zfs.poolName}}/backup/all'}
-
-shared_folders_group: family
-
-domain_name: example.com
-
+adminuser: administrator # should be an existing one from above
 docker: {
-  external_network: traefik_proxy,
-  data_dir: '/{{zfs.poolName}}/docker/data',
+  external_network: docker_ext,
+  data_dir: '/dataPool/docker/data',
   # data for docker env
   PUID: '1000',
   PGID: '115'

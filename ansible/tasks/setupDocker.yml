@@ -28,22 +28,35 @@
     path: "{{docker.data_dir}}"
     state: directory
 
-- name: Create folder for traefik data
-  file:
-    path: "{{docker.data_dir}}/traefik/acme"
-    state: directory
+# - name: Create folder for traefik data
+#   file:
+#     path: "{{docker.data_dir}}/traefik/acme"
+#     state: directory
 
-- name: Create acme config file for traefik
-  file:
-    path: "{{docker.data_dir}}/traefik/acme/acme.json"
-    state: touch
-    mode: '0600'
+# - name: Create acme config file for traefik
+#   file:
+#     path: "{{docker.data_dir}}/traefik/acme/acme.json"
+#     state: touch
+#     mode: '0600'
 
-- name: Copy treafik config file
-  template:
-    src: templates/traefik.toml
-    dest: "{{docker.data_dir}}/traefik/traefik.toml"
+# - name: Copy treafik config file
+#   template:
+#     src: templates/traefik.toml
+#     dest: "{{docker.data_dir}}/traefik/traefik.toml"
 
 - name: Create the external docker network {{docker.external_network}}
   docker_network:
     name: "{{docker.external_network}}"
+
+- name: Ensure docker group exists
+  group:
+    name: "docker"
+    state: present
+
+- name: Add admin to docker group
+  user:
+    name: "{{item.name}}"
+    groups: "{{item.groups}}"
+    append: yes
+  with_items:
+    "{{dockerusers}}"
